@@ -1,27 +1,52 @@
-import edu.princeton.cs.algs4.MinPQ;
-import edu.princeton.cs.algs4.StdIn;
-import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
 	private int openCount = 0;
+	private WeightedQuickUnionUF parentArray;
+	private boolean[] stateArray;
+	private int dimension;
 
 	public Percolation(int n) {
-		// create n-by-n grid, with all sites blocked
+		this.dimension = n;
+		int columns = n * n;
+		parentArray = new WeightedQuickUnionUF(columns);
+		stateArray = new boolean[columns];
 	}
 
 	public void open(int row, int col) {
-		// open site (row, col) if it is not open already
+		int arrVal = xyTo1D(row, col);
+		stateArray[arrVal] = true;
 		openCount++;
+		
+		// connect to other open neighbors.
+		// recursively?
 	}
-
+	
+	private int[] getOpenNeighbors(int val) {
+		
+		int[] neighbors = new int[4];
+		//above
+		if (val - dimension >= 0) neighbors[0] = val - dimension;
+		//below
+		if (val + dimension < dimension*dimension) neighbors[1] = val + dimension;
+		//left
+		
+		//right
+		
+		int left;
+		int right;
+		int below;
+		
+		return null;
+	}
+	
 	public boolean isOpen(int row, int col) {
-		// is site (row, col) open?
-		return false;
+		return stateArray[xyTo1D(row, col)];
 	}
 
 	public boolean isFull(int row, int col) {
 		// is site (row, col) full?
+		// isOpen(row, col)
 		return false;
 	}
 
@@ -35,13 +60,10 @@ public class Percolation {
 	}
 
 	private int xyTo1D(int row, int col) {
-		return 0;
+		return (dimension * (row - 1)) + col - 1;
 	}
-	
-	public static void main(String[] args) {
-		// test client (optional)
-		int n = 50;
-		Percolation perc = new Percolation(n);
-		System.out.println(perc.numberOfOpenSites());
+
+	public boolean[] getStateArray() {
+		return stateArray;
 	}
 }
