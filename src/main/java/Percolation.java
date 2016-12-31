@@ -2,17 +2,18 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
 	private int openCount = 0;
-	// FIXME make private
-	public WeightedQuickUnionUF parentArray;
+	private WeightedQuickUnionUF parentArray;
 	private boolean[] stateArray;
 	private int dimension;
 	private int columns;
+	
+	public int union = 0;
 
 	public Percolation(int n) {
 		if (n <= 0)	throw new java.lang.IllegalArgumentException();
 		dimension = n;
 		columns = dimension * dimension;
-		parentArray = new WeightedQuickUnionUF(columns);
+		parentArray = new WeightedQuickUnionUF(columns + 2);
 		stateArray = new boolean[columns];
 	}
 
@@ -31,11 +32,8 @@ public class Percolation {
 
 	public boolean isFull(int row, int col) {
 		validateRowCol(row, col);
-		if (isOpen(row, col)) {
-			for (int i = 0; i < dimension; i++) {
-				if (parentArray.connected(xyTo1D(row, col), i))
-					return true;
-			}
+		if (isOpen(row, col) && parentArray.connected(xyTo1D(row, col), columns)) {
+			return true;
 		}
 		return false;
 	}
@@ -45,7 +43,9 @@ public class Percolation {
 	}
 
 	public boolean percolates() {
-		// does the system percolate?
+		if (parentArray.connected(columns, columns + 1)) {
+			return true;
+		}
 		return false;
 	}
 
@@ -55,6 +55,11 @@ public class Percolation {
 
 	private void findNeighbors(int val) {
 		int neighbor;
+		//if on the top row, connect to "top" element n*n
+		if (val < dimension) parentArray.union(parentArray.find(val), parentArray.find(columns));
+		//if on the bottom row, connect to "bottom" element n*n + 1
+		if (((columns - dimension) < val) && (val < columns)) parentArray.union(parentArray.find(val), parentArray.find(columns + 1));
+		
 		neighbor = val - dimension; // above
 		if (neighbor >= 0 && stateArray[neighbor]) {
 			unionNeighbor(val, neighbor);
@@ -75,8 +80,7 @@ public class Percolation {
 
 	private void unionNeighbor(int val, int neighbor) {
 		if (!(parentArray.connected(val, neighbor))) {
-			parentArray.union(val, neighbor);
-			findNeighbors(neighbor);
+			parentArray.union(parentArray.find(val), parentArray.find(neighbor));		
 		}
 	}
 	
@@ -87,6 +91,5 @@ public class Percolation {
 		if (col <= 0 || col > dimension) {
 			throw new java.lang.IndexOutOfBoundsException("col index out of bounds");
 		}
-
 	}
 }

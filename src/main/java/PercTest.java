@@ -12,10 +12,10 @@ public class PercTest {
 		perc.open(2, 3);
 		perc.open(3, 2);
 		System.out.println(perc.numberOfOpenSites());
-		System.out.println(perc.parentArray.connected(6, 1));
-		System.out.println(perc.parentArray.connected(6, 5));
-		System.out.println(perc.parentArray.connected(6, 7));
-		System.out.println(perc.parentArray.connected(6, 11));
+//		System.out.println(perc.parentArray.connected(6, 1));
+//		System.out.println(perc.parentArray.connected(6, 5));
+//		System.out.println(perc.parentArray.connected(6, 7));
+//		System.out.println(perc.parentArray.connected(6, 11));
 	}
 
 }
