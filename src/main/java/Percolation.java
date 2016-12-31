@@ -10,8 +10,8 @@ public class Percolation {
 
 	public Percolation(int n) {
 		if (n <= 0) throw new java.lang.IllegalArgumentException();
-		this.dimension = n;
-		this.columns = dimension * dimension;
+		dimension = n;
+		columns = dimension * dimension;
 		parentArray = new WeightedQuickUnionUF(columns);
 		stateArray = new boolean[columns];
 	}
@@ -31,8 +31,11 @@ public class Percolation {
 	
 	public boolean isFull(int row, int col) {
 		validateRowCol(row, col);
-		// is site (row, col) full?
-		// isOpen(row, col)
+		if (isOpen(row, col)) {
+			for (int i = 0; i < dimension; i++) {
+				if (parentArray.connected(xyTo1D(row, col), i)) return true;
+			}
+		}
 		return false;
 	}
 
@@ -65,8 +68,12 @@ public class Percolation {
 	}
 	
 	private void validateRowCol(int row, int col){
-		if (row <= 0 || row > dimension || col <= 0 || col > dimension){
-			throw new java.lang.IndexOutOfBoundsException();
+		if (row <= 0 || row > dimension) {
+			throw new java.lang.IndexOutOfBoundsException("row index out of bounds");
 		}
+	    if (col <= 0 || col > dimension) {
+	    	throw new java.lang.IndexOutOfBoundsException("col index out of bounds");	    	
+	    }
+	    	
 	}
 }
