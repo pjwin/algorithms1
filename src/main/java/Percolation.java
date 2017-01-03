@@ -37,23 +37,23 @@ public class Percolation {
             topArray[val] = true;
         }
         // connect to "bottom"
-        if (((columns - dimension) < val) && (val < columns)) {
-            bottomArray[parentArray.find(val)] = true;
+        if (((columns - dimension) <= val) && (val < columns)) {
+            bottomArray[val] = true;
         }
-    
+
         int neighbor;
         neighbor = val - dimension; // above
         if (neighbor >= 0 && stateArray[neighbor])
             unionNeighbor(val, neighbor);
-    
+
         neighbor = val + dimension; // below
         if (neighbor < columns && stateArray[neighbor])
             unionNeighbor(val, neighbor);
-    
+
         neighbor = val - 1; // left
         if ((val % dimension > 0) && (neighbor >= 0) && stateArray[neighbor])
             unionNeighbor(val, neighbor);
-    
+
         neighbor = val + 1; // right
         if ((val % dimension < (dimension - 1)) && (neighbor < columns) && stateArray[neighbor])
             unionNeighbor(val, neighbor);
@@ -61,9 +61,22 @@ public class Percolation {
 
     public boolean isFull(int row, int col) {
         validateRowCol(row, col);
-        if (isOpen(row, col) && topArray[xyTo1D(row, col)]) {
-            return true;
+        if (isOpen(row, col)) {
+            if (topArray[xyTo1D(row, col)]) {
+                if (bottomArray[xyTo1D(row, col)] && topArray[xyTo1D(row, col)]) {
+                    percolates = true;
+                }
+                return true;
+            }
+            if (topArray[parentArray.find(xyTo1D(row, col))]) {
+                topArray[xyTo1D(row, col)] = true;
+                if (bottomArray[xyTo1D(row, col)] && topArray[xyTo1D(row, col)]) {
+                    percolates = true;
+                }
+                return true;
+            }
         }
+
         return false;
     }
 
@@ -72,15 +85,35 @@ public class Percolation {
     }
 
     private void unionNeighbor(int val, int neighbor) {
-        if (topArray[neighbor]) {
-            topArray[val] = true;
-        }
-        if (topArray[val] == true && topArray[neighbor] == false) {
-            topArray[neighbor] = true;
-        }
         if (!(parentArray.connected(val, neighbor))) {
             parentArray.union(parentArray.find(val), parentArray.find(neighbor));
         }
+        
+        if (topArray[val] || topArray[neighbor] || topArray[parentArray.find(val)]
+                || topArray[parentArray.find(neighbor)]) {
+            topArray[val] = true;
+            topArray[neighbor] = true;
+            topArray[parentArray.find(val)] = true;
+            topArray[parentArray.find(neighbor)] = true;
+        }
+        if (bottomArray[val] || bottomArray[neighbor] || bottomArray[parentArray.find(val)]
+                || bottomArray[parentArray.find(neighbor)]) {
+            bottomArray[val] = true;
+            bottomArray[neighbor] = true;
+            bottomArray[parentArray.find(val)] = true;
+            bottomArray[parentArray.find(neighbor)] = true;
+        }
+        
+        if (bottomArray[val] && topArray[val]){
+            percolates = true;
+        }
+        
+        //is this val connected to top/bottom?
+        //is the parent connected to top/bottom?
+        //is the neighbor connected to top/bottom?
+        //is the neighbor's parent connected to top/bottom?
+        //is it connected to top and bottom?
+        
     }
 
     public int numberOfOpenSites() {
