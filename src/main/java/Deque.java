@@ -26,7 +26,6 @@ public class Deque<Item> implements Iterable<Item> {
 		if (item == null) {
 			throw new java.lang.NullPointerException("Can't add null item.");
 		}
-		// add the item to the front
 		Node oldfirst = first;
 		first = new Node();
 		first.item = item;
@@ -35,6 +34,7 @@ public class Deque<Item> implements Iterable<Item> {
 			last = first;
 		} else {
 			oldfirst.prev = first;
+			first.next = oldfirst;
 		}		
 		count++;
 	}
@@ -51,6 +51,7 @@ public class Deque<Item> implements Iterable<Item> {
 			first = last;
 		} else {
 			oldlast.next = last;
+			last.prev = oldlast;
 		}
 		count++;
 	}
@@ -108,7 +109,18 @@ public class Deque<Item> implements Iterable<Item> {
 	}
 	
 	public static void main(String[] args) {
-		Deque d = new Deque();
+		Deque<String> d = new Deque<>();
+		System.out.println(d.count);
+		System.out.println(d.isEmpty());
+		d.addFirst("first item");
+		System.out.println(d.count);
+		System.out.println(d.isEmpty());
+		d.addFirst("another item");
+		System.out.println(d.count);
+		System.out.println(d.isEmpty());
+		System.out.println(d.removeFirst());
+		System.out.println(d.count);
+		System.out.println(d.removeLast());
 		System.out.println(d.count);
 		System.out.println(d.isEmpty());
 	}
