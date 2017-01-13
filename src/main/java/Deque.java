@@ -1,127 +1,105 @@
 import java.util.Iterator;
 
-public class Deque<Item> implements Iterable<Item> {
-	private Node first, last;
-	private int count = 0;
-	
-	private class Node {
-		Item item;
-		Node next;
-		Node prev;
-	}
+public class Deque<Item> implements Iterable<Item> {    
+    private class Node {
+        Item item;
+        Node next;
+        Node prev;
+    }
+    private Node first, last;
+    private int count = 0;
 
-	public Deque() {
-		// construct an empty deque
-	}
+    public Deque() {
+    }
 
-	public boolean isEmpty() {
-		return first == null || last == null;
-	}
+    public boolean isEmpty() {
+        return count == 0;
+    }
 
-	public int size() {
-		return count;
-	}
+    public int size() {
+        return count;
+    }
 
-	public void addFirst(Item item) {
-		if (item == null) {
-			throw new java.lang.NullPointerException("Can't add null item.");
-		}
-		Node oldfirst = first;
-		first = new Node();
-		first.item = item;
-		first.prev = null;
-		if (isEmpty()) {
-			last = first;
-		} else {
-			oldfirst.prev = first;
-			first.next = oldfirst;
-		}		
-		count++;
-	}
+    public void addFirst(Item item) {
+        if (item == null) {
+            throw new java.lang.NullPointerException("Can't add null item.");
+        }
+        Node oldfirst = first;
+        first = new Node();
+        first.item = item;
+        if (isEmpty()) {
+            last = first;
+        } else {
+            oldfirst.prev = first;
+            first.next = oldfirst;
+        }
+        count++;
+    }
 
-	public void addLast(Item item) {
-		if (item == null) {
-			throw new java.lang.NullPointerException("Can't add null item.");
-		}
-		Node oldlast = last;
-		last = new Node();
-		last.item = item;
-		last.next = null;
-		if (isEmpty()) {
-			first = last;
-		} else {
-			oldlast.next = last;
-			last.prev = oldlast;
-		}
-		count++;
-	}
+    public void addLast(Item item) {
+        if (item == null) {
+            throw new java.lang.NullPointerException("Can't add null item.");
+        }
+        Node oldlast = last;
+        last = new Node();
+        last.item = item;
+        if (isEmpty()) {
+            first = last;
+        } else {
+            oldlast.next = last;
+            last.prev = oldlast;
+        }
+        count++;
+    }
 
-	public Item removeFirst() {
-		if (isEmpty()) {
-			throw new java.util.NoSuchElementException("Can't remove an item from an empty list.");
-		}
-		Item item = first.item;
-		first = first.next;
-		if (isEmpty()) {
-			last = null;
-		}
-		count--;
-		return item;
-	}
+    public Item removeFirst() {
+        if (isEmpty()) {
+            throw new java.util.NoSuchElementException("Can't remove an item from an empty list.");
+        }
+        Item item = first.item;
+        first = first.next;
+        if (isEmpty()) {
+            last = null;
+        }
+        count--;
+        return item;
+    }
 
-	public Item removeLast() {
-		if (isEmpty()) {
-			throw new java.util.NoSuchElementException("Can't remove an item from an empty list.");
-		}
-		Item item = last.item;
-		last = last.prev;
-		if (isEmpty()) {
-			first = null;
-		}
-		count--;
-		return item;
-	}
+    public Item removeLast() {
+        if (isEmpty()) {
+            throw new java.util.NoSuchElementException("Can't remove an item from an empty list.");
+        }
+        Item item = last.item;
+        last = last.prev;
+        if (isEmpty()) {
+            first = null;
+        }
+        count--;
+        return item;
+    }
 
-	public Iterator<Item> iterator() {
-		return new DequeIterator();
-	}
-	
-	private class DequeIterator implements Iterator<Item>{
-		@Override
-		public boolean hasNext() {
-			// TODO Auto-generated method stub
-			return false;
-		}
-		
-		@Override
-		public Item next() {
-			// TODO Auto-generated method stub
-			if (!this.hasNext()) {
-				throw new java.util.NoSuchElementException("There are no more items.");
-			}
-			return null;
-		}
-		
-		@Override
-		public void remove() {
-			throw new java.lang.UnsupportedOperationException("Remove not supported.");
-		}
-	}
-	
-	public static void main(String[] args) {
-		Deque<String> d = new Deque<>();
-		System.out.println(d.count);
-		System.out.println(d.isEmpty());
-		d.addFirst("first item");
-		System.out.println(d.count);
-		System.out.println(d.isEmpty());
-		d.addFirst("another item");
-		System.out.println(d.count);
-		System.out.println(d.isEmpty());
-		System.out.println(d.removeFirst());
-		System.out.println(d.count);
-		System.out.println(d.removeLast());
-		System.out.println(d.count);
-		System.out.println(d.isEmpty());
-	}
+    public Iterator<Item> iterator() {
+        return new DequeIterator();
+    }
+
+    private class DequeIterator implements Iterator<Item> {
+        private Node current = first;
+
+        @Override
+        public boolean hasNext() {
+            return current != null;
+        }
+
+        @Override
+        public Item next() {
+            Item item = current.item;
+            current = current.next;
+            return item;
+        }
+
+        @Override
+        public void remove() {
+            throw new java.lang.UnsupportedOperationException("Remove not supported.");
+        }
+    }
 }
