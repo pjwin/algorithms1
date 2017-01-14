@@ -1,14 +1,12 @@
 import java.util.Iterator;
+import edu.princeton.cs.algs4.StdRandom;
 
 public class RandomizedQueue<Item> implements Iterable<Item> {
-    private class Node {
-        Item item;
-        Node next;
-    }
-    private Node first;
+    private Item[] s;
     private int count = 0;
 
-    public RandomizedQueue() {
+    public RandomizedQueue(int capacity) {
+        s = (Item[]) new Object[capacity];
     }
 
     public boolean isEmpty() {
@@ -23,24 +21,34 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if (item == null) {
             throw new java.lang.NullPointerException("Can't add null item.");
         }
-        Node oldfirst = first;
-        first = new Node();
-        first.item = item;
-        first.next = oldfirst;
-        count++;
+        if (count == s.length)
+            resize(2 * s.length);
+        s[count++] = item;
     }
 
     public Item dequeue() {
         if (isEmpty()) {
             throw new java.util.NoSuchElementException("Can't remove an item from an empty list.");
         }
-        return null;
-        // remove and return a random item
+        int position = StdRandom.uniform(count);
+        Item item = s[position];
+        s[position] = s[count - 1];
+        s[count - 1] = null;
+        count--;
+        if (count > 0 && count == s.length / 4)
+            resize(s.length / 2);
+        return item;
+    }
+
+    private void resize(int capacity) {
+        Item[] copy = (Item[]) new Object[capacity];
+        for (int i = 0; i < count; i++)
+            copy[i] = s[i];
+        s = copy;
     }
 
     public Item sample() {
-        // return (but do not remove) a random item
-        return null;
+        return s[StdRandom.uniform(count)];
     }
 
     public Iterator<Item> iterator() {
@@ -48,18 +56,26 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
 
     private class RandomizedQueueIterator implements Iterator<Item> {
-        private Node current = first;
+        int items = count;
+        int[] posarray = new int[count];
+
+        public RandomizedQueueIterator() {
+            for (int i = 0; i < count; i++) {
+                posarray[i] = i;
+            }
+            StdRandom.shuffle(posarray);
+        }
 
         @Override
         public boolean hasNext() {
-            // TODO
-            return false;
+            return items != 0;
         }
 
         @Override
         public Item next() {
-            // TODO
-            return null;
+            Item item = s[posarray[items - 1]];
+            items--;
+            return item;
         }
 
         @Override
